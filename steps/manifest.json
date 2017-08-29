@@ -1,0 +1,13 @@
+{
+  "title": "My App",
+  "feedback_link": "http://example.google.com",
+  "step1": {
+    "label": "Sample Step 1"
+  },
+  "step2": {
+    "label": "Sample Step 2"
+  },
+  "step3": {
+    "label": "Sample Step 3"
+  }
+}
