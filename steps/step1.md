@@ -1,637 +1,565 @@
-![Showdown][sd-logo]
+#### Article Content
 
-Showdown is a Javascript Markdown to HTML converter, based on the original works by John Gruber. It can be used client side (in the browser) or server side (with Node or io). 
+<ol type ="1">
+  <li>Perequisite</li>
+  <li>Setting Up Volley</li>
+  <li>Asynchronous Volley
+    <ol type ="1">
+    <li>Handling responses in Asynchronous Volley</li>
+    <li>Issues With Asynchronous Volley</li>
+    </ol>
+  </li>
+  <li>Synchronous Volley
+    <ol type ="1">
+    <li>When to make Synchronous Calls</li>
+    <li>Handling responses in Synchronous Volley</li>
+    </ol>
+  </li>
+  <li>Conclusion</li>
+</ol>
 
+**At the end of the lesson, you should be able to** : Effortlessly use volley to make synchronous and asynchronous call. <br>
+{: .notice}
 
-# Installation
+### Perequisite
 
-## Download tarball
+To be able to grasp the content of the article, it is advisable to have prior knowledge of:
 
-You can download the latest release tarball directly from [releases][releases]
+* Android Development - Beginner Level
+* Making Network Calls in Android
 
-## Bower
+You see, it is does not require a `unicorn horn` !  So, let's get started 
 
-    bower install showdown
+### Setting Up Volley
 
-## npm (server-side)
+There are a lot of post about how to set up volley. I will have to cover just the basics to get started.
 
-    npm install showdown
+**Step 1 - Add Dependency to gradle**
 
-## CDN
-
-You can also use one of several CDNs available: 
-
-* rawgit CDN
-
-        https://cdn.rawgit.com/showdownjs/showdown/<version tag>/dist/showdown.min.js
-
-* cdnjs
-
-        https://cdnjs.cloudflare.com/ajax/libs/showdown/<version tag>/showdown.min.js
-
-
-[sd-logo]: https://raw.githubusercontent.com/showdownjs/logo/master/dist/logo.readme.png
-[releases]: https://github.com/showdownjs/showdown/releases
-[atx]: http://www.aaronsw.com/2002/atx/intro
-[setext]: https://en.wikipedia.org/wiki/Setext
-
----------
-
-# Syntax
-
-
-## Introduction
-
-Showdown was created by John Fraser as a direct port of the original parser written by markdown's creator, John Gruber. Although Showdown has evolved since its inception, in "vanilla mode", it tries to follow the [original markdown spec][md-spec] (henceforth refereed as vanilla) as much as possible. There are, however, a few important differences, mainly due to inconsistencies in the original spec, which we addressed following the author's advice as stated in the [markdown's "official" newsletter][md-newsletter].
-
-Showdown also support "extra" syntax not defined in the original spec as opt-in features. This means new syntax elements are not enabled by default and require users to enable them through options.
-
-This document provides a quick description the syntax supported and the differences in output from the original markdown.pl implementation.
-
-## Paragraphs
-
-Paragraphs in Showdown are just **one or more lines of consecutive text** followed by one or more blank lines.
-
-```md
-On July 2, an alien mothership entered Earth's orbit and deployed several dozen 
-saucer-shaped "destroyer" spacecraft, each 15 miles (24 km) wide.
-    
-On July 3, the Black Knights, a squadron of Marine Corps F/A-18 Hornets, 
-participated in an assault on a destroyer near the city of Los Angeles.
-```
-
-The implication of the “one or more consecutive lines of text” is that Showdown supports 
-“hard-wrapped” text paragraphs. This means the following examples produce the same output:
-
-```md
-A very long line of text
-```
-
-```md
-A very
-long line
-of text
-```
-
-If you DO want to add soft line breaks (which translate to `<br>` in HTML) to a paragraph, 
-you can do so by adding 3 space characters to the end of the line (`  `).
-
-You can also force every line break in paragraphs to translate to `<br>` (as Github does) by
-enabling the option **`simpleLineBreaks`**.
-
-## Headings
-
-### Atx Style
-
-You can create a heading by adding one or more # symbols before your heading text. The number of # you use will determine the size of the heading. This is similar to [**atx style**][atx].
-
-```md
-# The largest heading (an <h1> tag)
-## The second largest heading (an <h2> tag)
-…
-###### The 6th largest heading (an <h6> tag)
-```
-
-The space between `#` and the heading text is not required but you can make that space mandatory by enabling the option **`requireSpaceBeforeHeadingText`**.
-
-You can wrap the headings in `#`. Both leading and trailing `#` will be removed.
-
-```md
-## My Heading ##
-```
-
-If, for some reason, you need to keep a leading or trailing `#`, you can either add a space or escape it:
-
-```md
-# # My header # #
-
-#\# My Header \# #
-```
-
-### Setext style
-
-You can also use [**setext style**][setext] headings, although only two levels are available.
-
-```md
-This is an H1
-=============
-    
-This is an H2
--------------
-```
-
-**Note:**    
-In live preview editors, when a paragraph is followed by a list it can cause an awkward effect.
-
-![awkward effect][]
-
-You can prevent this by enabling the option **`smoothPreview`**.
-
-### Header IDs
-
-Showdown generates bookmarks anchors in titles automatically, by adding an id property to an heading.
-
-```md
-# My cool header with ID
-```
-
-```html
-<h1 id="mycoolheaderwithid">My cool header with ID</h1>
-```
-
-This behavior can be modified with options:
-
- - **`noHeaderId`** disables automatic id generation; 
- - **`ghCompatibleHeaderId`** generates header ids compatible with github style (spaces are replaced with dashes and a bunch of non alphanumeric chars are removed)
- - **`prefixHeaderId`** adds a prefix to the generated header ids (either automatic or custom).
- - **`headerLevelStart`** sets the header starting level. For instance, setting this to 3 means that `# header` will be converted to `<h3>`.
-
-Read the [README.md][readme] for more info
-
-## Blockquotes
-
-You can indicate blockquotes with a >.
-
-```md
-In the words of Abraham Lincoln:
-    
-> Pardon my french
-```
-
-Blockquotes can have multiple paragraphs and can have other block elements inside.
-
-```md
-> A paragraph of text
->
-> Another paragraph
->
-> - A list
-> - with items
-```
-
-## Bold and Italic
-
-You can make text bold or italic.
-
-    *This text will be italic*
-    **This text will be bold**
-
-Both bold and italic can use either a \* or an \_ around the text for styling. This allows you to combine both bold and italic if needed.
-
-    **Everyone _must_ attend the meeting at 5 o'clock today.**
-
-## Strikethrough
-
-With the option **`strikethrough`** enabled, Showdown supports strikethrough elements.
-The syntax is the same as GFM, that is, by adding two tilde (`~~`) characters around
-a word or groups of words.
-
-```md
-a ~~strikethrough~~ element
-```
-
-a ~~strikethrough~~ element
-
-## Code formatting
-
-### Inline formats
-
-Use single backticks (`) to format text in a special monospace format. Everything within the backticks appear as-is, with no other special formatting.
-
-```md
-Here's an idea: why don't we take `SuperiorProject` and turn it into `**Reasonable**Project`.
-```
-
-```html
-<p>Here's an idea: why don't we take <code>SuperiorProject</code> and turn it into <code>**Reasonable**Project</code>.</p>
-```
-
-### Multiple lines
-
-To create blocks of code you should indent it by four spaces.
-
-```
-    this is a piece
-    of
-    code
-```
-
-If the options **`ghCodeBlocks`** is activated (which is by default), you can use triple backticks (```) to format text as its own distinct block.
-
-    Check out this neat program I wrote:
-
-    ```
-    x = 0
-    x = 2 + 2
-    what is x
-    ```
-
-## Lists
-
-Showdown supports ordered (numbered) and unordered (bulleted) lists.
-
-### Unordered lists
-
-You can make an unordered list by preceding list items with either a *, a - or a +. Markers are interchangeable too.
-
-```md
-* Item
-+ Item
-- Item
-```
-
-### Ordered lists
-
-You can make an ordered list by preceding list items with a number.
-
-```md
-1. Item 1
-2. Item 2
-3. Item 3
-```
-
-It’s important to note that the actual numbers you use to mark the list have no effect on the HTML output Showdown produces. So you can use the same number in all items if you wish to.
-
-### TaskLists (GFM Style)
-
-Showdown also supports GFM styled takslists if the **`tasklists`** option is enabled.
-
-```md
- - [x] checked list item
- - [ ] unchecked list item
+```gradle
+compile 'com.android.volley:volley:1.0.0'
 ``` 
 
- - [x] checked list item
- - [ ] unchecked list item
+**Step 2 - Use Request Queue**
 
-### List syntax
+All requests in Volley are placed in a queue first and then processed, here is how you will be creating a request queue:
 
-List markers typically start at the left margin, but may be indented by up to three spaces. 
-
-```md
-   * this is valid
-   * this is too  
+```java
+RequestQueue mRequestQueue = Volley.newRequestQueue(this); // 'this' is Context
 ```
 
-List markers must be followed by one or more spaces or a tab.
+Don't forget to add `internet permission`
 
-To make lists look nice, you can wrap items with hanging indents:
-
-```md
-*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,
-    viverra nec, fringilla in, laoreet vitae, risus.
-*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
-    Suspendisse id sem consectetuer libero luctus adipiscing.
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
 ```
 
-But if you want to be lazy, you don’t have to
+Ideally you should have one centralized place for your Queue, and the best place to initialize queue is in your Application class. Here is how this can be done:
 
-If one list item is separated by a blank line, Showdown will wrap all the list items in `<p>` tags in the HTML output.
-So this input:
+```java
+public class ApplicationController extends Application {
 
-```md
-* Bird
+    /**
+     * Log or request TAG
+     */
+    public static final String TAG = "VolleyPatterns";
 
-* Magic
-* Johnson
+    /**
+     * Global request queue for Volley
+     */
+    private RequestQueue mRequestQueue;
+
+    /**
+     * A singleton instance of the application class for easy access in other places
+     */
+    private static ApplicationController sInstance;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // initialize the singleton
+        sInstance = this;
+    }
+
+    /**
+     * @return ApplicationController singleton instance
+     */
+    public static synchronized ApplicationController getInstance() {
+        return sInstance;
+    }
+
+    /**
+     * @return The Volley Request queue, the queue will be created if it is null
+     */
+    public RequestQueue getRequestQueue() {
+        // lazy initialize the request queue, the queue instance will be
+        // created when it is accessed for the first time
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+
+        return mRequestQueue;
+    }
+
+    /**
+     * Adds the specified request to the global queue, if tag is specified
+     * then it is used else Default TAG is used.
+     * 
+     * @param req
+     * @param tag
+     */
+    public <T> void addToRequestQueue(Request<T> req, String tag) {
+        // set the default tag if tag is empty
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+
+        VolleyLog.d("Adding request to queue: %s", req.getUrl());
+
+        getRequestQueue().add(req);
+    }
+
+    /**
+     * Adds the specified request to the global queue using the Default TAG.
+     * 
+     * @param req
+     * @param tag
+     */
+    public <T> void addToRequestQueue(Request<T> req) {
+        // set the default tag if tag is empty
+        req.setTag(TAG);
+
+        getRequestQueue().add(req);
+    }
+
+    /**
+     * Cancels all pending requests by the specified TAG, it is important
+     * to specify a TAG so that the pending/ongoing requests can be cancelled.
+     * 
+     * @param tag
+     */
+    public void cancelPendingRequests(Object tag) {
+        if (mRequestQueue != null) {
+            mRequestQueue.cancelAll(tag);
+        }
+    }
+}
 ```
 
-Results in:
 
-```html
-<ul>
-<li><p>Bird</p></li>
-<li><p>Magic</p></li>
-<li><p>Johnson</p></li>
-</ul>
+### Asynchronous Volley
+
+Volley provides the following utility classes which you can use to make asynchronous HTTP requests:
+
+<a href="https://android.googlesource.com/platform/frameworks/volley/+/43950676303ff68b23a8b469d6a534ccd1e08cfc/src/com/android/volley/toolbox/JsonObjectRequest.java" target="_blank">JsonObjectRequest</a> — To send and receive JSON Object from the Server
+
+<a href="https://android.googlesource.com/platform/frameworks/volley/+/43950676303ff68b23a8b469d6a534ccd1e08cfc/src/com/android/volley/toolbox/JsonArrayRequest.java" target="_blank">JsonArrayRequest</a> — To receive JSON Array from the Server
+
+<a href="https://android.googlesource.com/platform/frameworks/volley/+/43950676303ff68b23a8b469d6a534ccd1e08cfc/src/com/android/volley/toolbox/StringRequest.java" target="_blank">StringRequest</a> — To retrieve response body as String (ideally if you intend to parse the response by yourself)
+
+Note: To send parameters in request body you need to override either getParams() or getBody() method of the request classes (as required) described below.
+{: .notice}
+
+### Handling Response from Asynchronous Volley
+Since Volley already handles it's call on the background, it means that there is no wait on the call. You can continue to do other things while the network call is being made. To continue operation on data returned from volley asynchronous call, it needs to be done on the callback. Here are ways you can achieve that:
+
+* **Using Volley Callback** 
+
+```java
+
+    public void loadJsonObject(String url, String keyTrack, int action, JSONObject jsonRequest, final Map<String, String> params, Response.Listener<JSONObject> volleyCallbackResponse, Response.ErrorListener volleyErrorResponse) {
+
+
+        JsonObjectRequest request = new JsonObjectRequest(action, url, jsonRequest, volleyCallbackResponse, volleyErrorResponse) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+    }
 ```
 
-This differs from other markdown implementations such as GFM (github) or commonmark.  
+* **Using CustomCallBack**
 
-### Nested blocks
+```java
 
-List items may consist of multiple paragraphs. Each subsequent paragraph in a list item must be indented by either 4 spaces or one tab:
+    public interface ResponseCallBack{
+        void onResponse(Object response);
+        void error(Object errorObj);
+    }
 
-```md
-1.  This is a list item with two paragraphs. Lorem ipsum dolor
-    sit amet, consectetuer adipiscing elit. Aliquam hendrerit
-    mi posuere lectus.
+    public void loadJsonObject(String url, String keyTrack, int action, JSONObject jsonRequest, final Map<String, String> params, final ResponseCallBack responseCallBack) {
 
-    Vestibulum enim wisi, viverra nec, fringilla in, laoreet
-    vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
-    sit amet velit.
 
-2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+        JsonObjectRequest request = new JsonObjectRequest(action, url, jsonRequest, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                responseCallBack.onResponse(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                responseCallBack.error(error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)); // for retry policy
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+    }
 ```
 
-This is valid for other block elements such as blockquotes:
+### Issues with Asynchronous Volley
 
-```md
-*   A list item with a blockquote:
+When volley returns response, it does so on the UI thread - even when you call from a Service. . The implication of this is that operations done inside the callback will happen on the UI thread. Well, this wouldn't bother you unless in some scenerios.
+Let's Assume 
 
-    > This is a blockquote
-    > inside a list item.
+1. you want to pull some data from the server
+2. Process the data 
+3. Save the data in database
+4. Reflect update on the UI
+
+If you decide to handle retrieving of data with an asychronous volley, since volley returns response on UI Thread, making database operation on the UI thread will affect performance.
+
+I know what you are thinking. You will handle the database operation using AsyncTask. Well, that is what you tried avoiding in the first place. Isn't it better to just handles everything using Asyntask then ? 
+
+Asychronous Volley has its great numerous advantages. But it should be worthy of note that there are cases were it can't do much for you. One will expect for volley to return response to same thread it was called. It doesn't work that way. Any operation done on the callback happens on the UI threas, thereby affecting performance. I learned the hard way.
+
+### Sychronous Volley
+
+Issues with Asynchronous Volley made me search for ways I handle Volley synchronously. Volley hanldes synchronous call using a feature call Future.
+With `Future` - more like a `promise` , you can make a request and wait for the response. This wait happens synchronously.
+
+
+### When to make Synchronous Volley Calls
+
+Well, these are scenerios I considered neccessary to make synchronous calls
+
+1. Using Volley in a Service
+2. There is a need to get the data before further operations
+
+
+# Handling Response in Synchronous Volley
+
+Here is a snippet of how I make Synchronous call in volley
+
+```java
+
+    public VolleyResponse<JSONObject> loadFutureJsonObject(String url, String keyTrack, int action, JSONObject jsonRequest, final Map<String, String> params) {
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+
+        JsonObjectRequest request = new JsonObjectRequest(action, url, jsonRequest, future, future) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(600000, 15, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+
+        try {
+            JSONObject response = future.get(2, TimeUnit.MINUTES);
+            return new VolleyResponse<>(true, response);
+        } catch (InterruptedException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        } catch (ExecutionException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        } catch (TimeoutException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        }
+
+    }
 ```
 
-or event other lists.
+The request was added to the RequestQueue before calling `future.get`
+{: .notice}
 
-### Nested lists
+The good side about using Future is that you can decide how long to wait. If the time elapses and a result is not returned yet, there is a 
+`TimeoutException`
 
-You can create nested lists by indenting list items by **four** spaces.
+### Conclusion
 
-```md
-1.  Item 1
-    1. A corollary to the above item.
-    2. Yet another point to consider.
-2.  Item 2
-    * A corollary that does not need to be ordered.
-    * This is indented four spaces
-    * You might want to consider making a new list.
-3.  Item 3
+You can also use same technique to make <a href="https://developer.android.com/training/volley/request-custom.html" target="_blank">Custom Volley Request 
+</a>.
+
+Contributions to this post is welcome. By the way, here is a `VolleyHelper` that I use to make  Volley Calls less tedious. I keep updating it over time. 
+
+```java
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
+import com.appzonegroup.zone.zonedata.ApplicationController;
+import com.appzonegroup.zone.zonedata.utils.Utilities;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.Calendar;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+
+public class VolleyHelper {
+
+
+
+    public void loadJsonObject(String url, String keyTrack, int action, JSONObject jsonRequest, final Map<String, String> params, Response.Listener<JSONObject> volleyCallbackResponse, Response.ErrorListener volleyErrorResponse) {
+
+
+        JsonObjectRequest request = new JsonObjectRequest(action, url, jsonRequest, volleyCallbackResponse, volleyErrorResponse) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+    }
+
+
+    public VolleyResponse<JSONObject> loadFutureJsonObject(String url, String keyTrack, int action, JSONObject jsonRequest, final Map<String, String> params) {
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+
+        JsonObjectRequest request = new JsonObjectRequest(action, url, jsonRequest, future, future) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(600000, 15, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+
+        try {
+            JSONObject response = future.get(2, TimeUnit.MINUTES);
+            return new VolleyResponse<>(true, response);
+        } catch (InterruptedException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        } catch (ExecutionException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        } catch (TimeoutException e) {
+            // exception handling
+            return buildErrorMessage(e.getMessage());
+        }
+
+    }
+
+    public VolleyHelper.VolleyResponse<JSONArray> loadFutureJsonArray(String url, String keyTrack, int action, JSONArray jsonRequest, final Map<String, String> params) {
+
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+
+        JsonArrayRequest request = new JsonArrayRequest(action, url, jsonRequest, future, future) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+        try {
+            JSONArray response = future.get(2, TimeUnit.MINUTES);
+            return new VolleyHelper.VolleyResponse<JSONArray>(true, response);
+        } catch (Exception e) {
+            return buildErrorMessage(e.getMessage());
+        }
+    }
+
+    public VolleyHelper.VolleyResponse<String> loadFutureStringObject(String url, String keyTrack, int action, final Map<String, String> params) {
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new StringRequest(action, url, future, future) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return body.trim().isEmpty() ?
+                        super.getBodyContentType() : "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return super.getHeaders();
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                if (!body.trim().isEmpty())
+                    return body.getBytes();
+                return "".getBytes();
+            }
+
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+
+
+        String response = null;
+        try {
+            response = future.get(2, TimeUnit.MINUTES);
+            if (!Utilities.isEmpty(response))
+                return new VolleyHelper.VolleyResponse<>(true, response);
+            else
+                return buildErrorMessage("");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return buildErrorMessage(e.getMessage());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return buildErrorMessage(e.getMessage());
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+            return buildErrorMessage(e.getMessage());
+        }
+
+
+    }
+
+    public void loadStringObject(String url, String keyTrack, int action, final Map<String, String> params, final Response.Listener<String> volleyCallbackResponse, Response.ErrorListener volleyErrorResponse) {
+
+        StringRequest request = new StringRequest(action, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                volleyCallbackResponse.onResponse(response);
+            }
+        }, volleyErrorResponse) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                if (params != null)
+                    return params;
+                return super.getParams();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return body.trim().isEmpty() ?
+                        super.getBodyContentType() : "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return super.getHeaders();
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                if (!body.trim().isEmpty())
+                    return body.getBytes();
+                return super.getBody();
+            }
+
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(300000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        ApplicationController.getInstance().addToRequestQueue(request, keyTrack + Calendar.getInstance().getTimeInMillis());
+    }
+
+    String body = "";
+
+    public void loadStringObject(String url, String keyTrack, int action, String body, final Map<String, String> params, Response.Listener<String> volleyCallbackResponse, Response.ErrorListener volleyErrorResponse) {
+        this.body = body;
+        loadStringObject(url, keyTrack, action, params, volleyCallbackResponse, volleyErrorResponse);
+    }
+
+    public VolleyHelper.VolleyResponse<String> loadFutureStringObject(String url, String keyTrack, int action, String body, final Map<String, String> params) {
+        this.body = body;
+        return loadFutureStringObject(url, keyTrack, action, params);
+    }
+
+
+    public interface VolleyResponseInterface<T> {
+        void onResponse(T t);
+
+        void onGotoError(JSONObject error);
+
+        void onError(String error);
+    }
+
+    public VolleyResponse buildErrorMessage(String errorMessage) {
+        VolleyResponse volleyResponse = new VolleyResponse(false, null);
+        volleyResponse.setErrorMessage(errorMessage);
+        return volleyResponse;
+    }
+
+    public class VolleyResponse<T> {
+        private boolean isSuccess = false;
+        private T response;
+        private String errorMessage;
+
+        public String getErrorMessage() {
+            return this.errorMessage;
+        }
+
+        public VolleyHelper.VolleyResponse setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+            return this;
+        }
+
+        public VolleyResponse(boolean isSuccess, T response) {
+            this.isSuccess = isSuccess;
+            this.response = response;
+        }
+
+        public boolean isSuccess() {
+            return this.isSuccess;
+        }
+
+        public VolleyHelper.VolleyResponse setSuccess(boolean success) {
+            this.isSuccess = success;
+            return this;
+        }
+
+        public T getResponse() {
+            return this.response;
+        }
+
+        public VolleyHelper.VolleyResponse setResponse(T response) {
+            this.response = response;
+            return this;
+        }
+    }
+
+
+}
 ```
-
-This behavior is consistent with the original spec but differs from other implementations suck as GFM or commonmark. Prior to version 1.5, you just needed to indent two spaces for it to be considered a sublist.
-You can disable the **four spaces requirement** with option **`disableForced4SpacesIndentedSublists`**
-
-To nest a third (or more) sublist level, you need to indent 4 extra spaces (or 1 extra tab) for each level.
-
-```
-1.  level 1
-    1.  Level 2
-        *   Level 3
-    2.  level 2
-        1.  Level 3
-1.  Level 1
-```
-
-### Nested code blocks
-
-You can nest fenced codeblocks the same way you nest other block elements, by indenting by fours spaces or a tab:
-
-```md
-1.  Some code:
-
-    ```js
-    var foo = 'bar';
-    console.log(foo);
-    ```
-```
-
-To put a *indented style* code block within a list item, the code block needs to be indented twice — 8 spaces or two tabs:
-
-```md
-1.  Some code:
-
-    var foo = 'bar';
-    console.log(foo);
-```
-
-## Links
-
-### Simple
-
-If you wrap a valid URL or email in `<>` it will be turned into a link whose text is the link itself.
-
-```md
-link to <http://www.google.com/>
-
-this is my email <somedude@mail.com>
-```
-
-In the case of email addreses, Showdown will also perform a bit of randomized decimal and hex entity-encoding to help obscure your address from address-harvesting spambots.
-You can disable this obfuscation setting **`encodeEmails`** option to `false`.
-
-With the option **`simplifiedAutoLink`** enabled, Showdown will automagically turn every valid URL it finds in the text body to links for you, without the need to wrap them in `<>`.
-
-```md
-link to http://www.google.com/
-
-this is my email somedude@mail.com
-```
-
-### Inline
-
-You can create an inline link by wrapping link text in brackets ( `[ ]` ), and then wrapping the link in parentheses ( `( )` ).
-
-For example, to create a hyperlink to github.com/showdownjs/showdown, with a link text that says, Get Showdown!, you'd write this in Markdown: `[Get Showdown!](https://github.com/showdownjs/showdown)`.
-
-### Reference Style
-
-You can also use the reference style, like this:
-
-```md
-this is a [link to google][1]
-
-[1]: www.google.com
-```
-
-Showdown also supports implicit link references:
-
-```md
-this is a link to [google][]
-
-[google]: www.google.com
-```
-
-## Images
-
-Markdown uses an image syntax that is intended to resemble the syntax for links, also allowing for two styles: inline and reference.
-
-### Inline
-
-Inline image syntax looks like this:
-
-```
-![Alt text](url/to/image)
-
-![Alt text](url/to/image "Optional title")
-```
-
-That is:
-
- + An exclamation mark: !;
- + followed by a set of square brackets, containing the alt attribute text for the image;
- + followed by a set of parentheses, containing the URL or path to the image, and an optional title attribute enclosed in double or single quotes.
-
-
-### Reference Style
-
-Reference-style image syntax looks like this:
-
-```md
-![Alt text][id]
-```
-
-Where “id” is the name of a defined image reference. Image references are defined using syntax identical to link references:
-
-```md
-[id]: url/to/image  "Optional title attribute"
-```
-
-Implicit references are also supported in images, similar to what happens with links:
-
-```md
-![showdown logo][]
-
-[showdown logo]: http://showdownjs.github.io/demo/img/editor.logo.white.png
-```
-
-### Image dimensions
-
-When the option **`parseImgDimension`** is activated, you can also define the image dimensions, like this:
-
-```md
-![Alt text](url/to/image =250x250 "Optional title")
-```
-
-or in reference style:
-
-```md
-![Alt text][id]
-
-[id]: url/to/image =250x250
-```
-
-## Tables
-
-Tables aren't part of the core Markdown spec, but they are part of GFM and Showdown supports them by turning on the option `tables`.
-
-Colons can be used to align columns.
-
-In the new version, the outer pipes (`|`) are optional, matching GFM spec. 
-
-You also don't need to make the raw Markdown line up prettily.
-
-You can also use other markdown syntax inside them.
-
-```
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| **col 3 is**  | right-aligned | $1600 |
-| col 2 is      | *centered*    |   $12 |
-| zebra stripes | ~~are neat~~  |    $1 |
-```
-
-## Escaping markdown entities
-
-Showdown allows you to use backslash (`\`) escapes to generate literal characters which would otherwise have special meaning in markdown’s syntax. For example, if you wanted to surround a word with literal underscores (instead of an HTML `<em>` tag), you can use backslashes before the unserscores, like this:
-
-```md
-\_literal underscores\_
-```
-
-Showdown provides backslash escapes for the following characters:
-
-```
-\   backslash
-`   backtick
-*   asterisk
-_   underscore
-{}  curly braces
-[]  square brackets
-()  parentheses
-#   hash mark
-+   plus sign
--   minus sign (hyphen)
-.   dot
-!   exclamation mark
-```
-
-## Mentions
-
-Showdown supports github mentions by enabling the option **`ghMentions`**. This will turn every `@username` into a link to their github profile.
-
-```md
-hey @tivie, check this out
-```
-
-Since version 1.6.2 you can customize the generated link in mentions with the option **`ghMentionsLink`**.
-For instance, setting this option to `http://mysite.com/{u}/profile`:
-
-```html
-<p>hey <a href="http://mysite.com/tivie/profile">@tivie</a>, check this out</p>
-```
-
-## Handling HTML in markdown documents
-
-Showdown, in most cases, leaves HTML tags alone, leaving them untouched in the output document.
-
-```md
-some markdown **here**
-<div>this is *not* **parsed**</div>
-```
-
-```html
-<p>some markdown <strong>here</strong></p>
-<div>this is *not* **parsed**</div>
-```
-
-However, there are exceptions to this. With `<code>` and `<pre><code>` tags, their contents are always escaped.
-
-```md
-some markdown **here** with <code>foo & bar <baz></baz></code>
-```
-
- ```html
-<p>some markdown <strong>here</strong> with <code>foo &amp; bar &lt;baz&gt;&lt;/baz&gt;</code></p>
-``` 
-
-If you wish to enable markdown parsing inside a specific HTML tag, you can enable it by using the html attribute **`markdown`** or  **`markdown="1"`**  or **`data-markdown="1"`**.
-
-```md
-some markdown **here**
-<div markdown="1">this is *not* **parsed**</div>
-```
-
-```html
-<p>some markdown <strong>here</strong></p>
-<div markdown="1"><p>this is <em>not</em> <strong>parsed</strong></p></div>
-```
-
-## Known differences and Gotchas
-
-In most cases, Showdown's output is identical to that of Perl Markdown v1.0.2b7.  What follows is a list of all known deviations.  Please file an issue if you find more.
-
-* **Since version 1.4.0, showdown supports the markdown="1" attribute**, but for older versions, this attribute is ignored. This means:
-
-        <div markdown="1">
-             Markdown does *not* work in here.
-        </div>
-
-
-* You can only nest square brackets in link titles to a
-    depth of two levels:
-
-        [[fine]](http://www.github.com/)
-        [[[broken]]](http://www.github.com/)
-
-    If you need more, you can escape them with backslashes.
-
-
-* A list is **single paragraph** if it has only **1 line-break separating items** and it becomes **multi paragraph if ANY of its items is separated by 2 line-breaks**:
-
-   ```md
-    - foo
-   
-    - bar
-    - baz
-   ```
-   becomes
-
-    ```html
-    <ul>
-      <li><p>foo</p></li>
-      <li><p>bar</p></li>
-      <li><p>baz</p></li>
-    </ul>
-    ```
-
-This new ruleset is based on the comments of Markdown's author John Gruber in the [Markdown discussion list][md-newsletter].
-
-[md-spec]: http://daringfireball.net/projects/markdown/
-[md-newsletter]: https://pairlist6.pair.net/mailman/listinfo/markdown-discuss
-[atx]: http://www.aaronsw.com/2002/atx/intro
-[setext]: https://en.wikipedia.org/wiki/Setext
-[readme]: https://github.com/showdownjs/showdown/blob/master/README.md
-[awkward effect]: http://i.imgur.com/YQ9iHTL.gif
+I really hope this helps. <br>
+Thanks.
