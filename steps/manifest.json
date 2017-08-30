@@ -1,7 +1,12 @@
 {
   "title": "This is the Title of the App",
   "feedback_link": "http://example.google.com",
-  "steps":["step1","step2","step3"],
+  "steps": [
+    "step1",
+    "step2",
+    "step3",
+    "step4"
+  ],
   "step1": {
     "label": "Learning how to do this."
   },
@@ -10,5 +15,8 @@
   },
   "step3": {
     "label": "Sample Step 3"
+  },
+  "step4": {
+    "label": "Sample Step 4"
   }
 }
