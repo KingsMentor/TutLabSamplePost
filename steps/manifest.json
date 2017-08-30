@@ -1,6 +1,7 @@
 {
   "title": "My App",
   "feedback_link": "http://example.google.com",
+  "steps":["step1","step2","step3"],
   "step1": {
     "label": "Sample Step 1"
   },
