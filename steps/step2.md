@@ -1,3 +1,12 @@
+---
+layout: post
+title: Rationale - Handling Android Permission.
+excerpt: "Android Permission grant access to User's data. Sensitive data. Most times, user's aren't exactly sure why your application need access to a particular permission. Today, I will be sharing how to reduce the risk of having constant denial of permission by users and how you can implement important techiniques found in apps like WhatApp by using Rationale."
+tag: [android,java]
+modified: 2017-01-08
+comments: true
+---
+
 Android Permission grant access to User's data. Sensitive data. Most times, user's aren't exactly sure why your application need access to a particular permission. Today, I will be sharing how to reduce the risk of having constant denial of permission by users and how you can implement important techiniques found in apps like WhatApp by using <a href="https://github.com/KingsMentor/Rationale" target="_blank"> Rationale</a>.
 
 **At the end of the lesson, you should be able to :** <br>
@@ -13,7 +22,7 @@ Android Permission grant access to User's data. Sensitive data. Most times, user
 
 #### The Flow
 Android 6.0 Marshmallow introduced a new permissions model that lets apps request permissions from the user at runtime, rather than prior to installation. Apps that support the new model request permissions when the app actually requires the services or data protected by the services. While this doesn't (necessarily) change overall app behavior, it does create a few changes relevant to the way sensitive user data is handled. This introduces a Flow Similar to :
-![advisible flow to use on handling permissions](/img/rationale/complete_flow.png "The Flow") . 
+
 
 ##### Components of the Flow:
 
@@ -72,11 +81,10 @@ Taking a look at **Explain the permission** , I haven't really seen a well imple
 1. Show permission dialog containing information on why the request should be granted.
 2. If the permission was prevoiusly denied, the dialog provide a way to launch the permission settings screen and it also detect if the permission has been granted `onResume`. This means that method call dependent on permission can continue.
 
-<p class="pic"><img src="/img/rationale/whats_permission.jpeg" alt="Drawing" /></p>
+
 
 ##### Introducing Rationale
 <a href="https://github.com/KingsMentor/Rationale" target="_blank"> Rationale</a> is an android library that helps manage permission request.  With Rationale, the permission flow can be reduced to :
-![advisible flow to use on handling permissions](/img/rationale/new_flow.png "The New Flow")
 
 All it requires is a list of permission passed to it,it then handles the entire interaction with the users, and return list of permission to be requested for. 
 
@@ -165,3 +173,5 @@ More details about using **Rationale** and **How to Contribute** can be found on
 
 
 Yea! This wasn't boring afterall. You should probably leave a comment. <br>Thanks for reading.<br>
+
+
