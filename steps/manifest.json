@@ -1,6 +1,7 @@
 {
   "title": "This is the Title of the App",
   "feedback_link": "http://example.google.com",
+  "home":"www.example.com",
   "steps": [
     
     "step1",
