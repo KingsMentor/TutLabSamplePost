@@ -1,11 +1,3 @@
----
-layout: post
-title: Rationale - Handling Android Permission.
-excerpt: "Android Permission grant access to User's data. Sensitive data. Most times, user's aren't exactly sure why your application need access to a particular permission. Today, I will be sharing how to reduce the risk of having constant denial of permission by users and how you can implement important techiniques found in apps like WhatApp by using Rationale."
-tag: [android,java]
-modified: 2017-01-08
-comments: true
----
 
 Android Permission grant access to User's data. Sensitive data. Most times, user's aren't exactly sure why your application need access to a particular permission. Today, I will be sharing how to reduce the risk of having constant denial of permission by users and how you can implement important techiniques found in apps like WhatApp by using <a href="https://github.com/KingsMentor/Rationale" target="_blank"> Rationale</a>.
 
