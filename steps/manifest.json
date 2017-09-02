@@ -2,7 +2,7 @@
   "title": "This is the Title of the App",
   "feedback_link": "http://belvi.xyz",
   "home":"http://belvi.xyz",
-  "showLastUpdate":false
+  "showLastUpdate": false,
   "steps": [
     
     "step1",
