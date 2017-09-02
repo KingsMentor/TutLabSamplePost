@@ -2,6 +2,7 @@
   "title": "This is the Title of the Post",
   "feedback_link": "http://belvi.xyz",
   "home":"http://belvi.xyz",
+  "flavor":"github",
   "showLastUpdate": false,
   "steps": [
     
